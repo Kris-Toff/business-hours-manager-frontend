@@ -1,6 +1,9 @@
-<script setup></script>
+<script setup>
+import AppBar from "@/components/AppBar.vue";
+</script>
 
 <template>
+  <app-bar />
   <v-container>
     <v-row>
       <v-col>

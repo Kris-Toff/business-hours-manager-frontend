@@ -26,6 +26,17 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/dashboard",
+      component: () => import("../layouts/Dashboard.vue"),
+      children: [
+        {
+          path: "",
+          name: "dashboard",
+          component: () => import("../pages/dashboard/Index.vue"),
+        },
+      ],
+    },
   ],
 });
 
