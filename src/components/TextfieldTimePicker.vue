@@ -1,12 +1,17 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 const timeModel = defineModel();
-const textModel = ref(null);
 const pickerProps = defineProps({ label: { type: [String], default: null } });
+
+const textModel = ref(
+  timeModel.value != null
+    ? dayjs(timeModel.value, "hh:mm").format("hh:mm a")
+    : null
+);
 
 function modelUpdate(v) {
   textModel.value = dayjs(v, "hh:mm").format("hh:mm a");

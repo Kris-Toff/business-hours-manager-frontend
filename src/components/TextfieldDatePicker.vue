@@ -1,19 +1,28 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useDate } from "vuetify";
+import { useDateFormatting } from "@/composables/useDateFormatting";
 const date = useDate();
-const model = defineModel();
+const { dateStringFormat } = useDateFormatting();
+const model = defineModel({ type: String });
 const pickerProps = defineProps({ label: { type: [String], default: null } });
-const selectedDate = ref(null);
+
+const selectedDate = ref(
+  model.value != null ? date.parseISO(model.value) : null
+);
+
+const dateString = computed(() => {
+  return model.value != null ? date.format(model.value, "keyboardDate") : null;
+});
 
 function modelUpdate(v) {
-  model.value = date.format(v, "keyboardDate");
+  model.value = dateStringFormat(v, "YYYY-MM-DD");
 }
 </script>
 
 <template>
   <v-text-field
-    v-model="model"
+    v-model="dateString"
     density="compact"
     type="text"
     class="mt-2"
