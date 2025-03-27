@@ -1,11 +1,15 @@
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
 const timeModel = defineModel();
-const pickerProps = defineProps({ label: { type: [String], default: null } });
+const pickerProps = defineProps({
+  label: { type: [String], default: null },
+  min: { type: [String], default: null },
+  max: { type: [String], default: null },
+});
 
 const textModel = ref(
   timeModel.value != null
@@ -43,6 +47,8 @@ function modelUpdate(v) {
         </template>
         <v-time-picker
           v-model="timeModel"
+          :min="min"
+          :max="max"
           color="red-lighten-1"
           ampm-in-title
           format="ampm"

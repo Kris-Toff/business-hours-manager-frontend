@@ -93,14 +93,20 @@ const days = ref([
           :key="day.id"
         >
           <v-expansion-panel-title>
-            <span class="font-weight-black mr-6">{{ day.day }}</span>
-            <span>
-              <v-icon
-                icon="mdi:mdi-circle-medium"
-                :color="day.status ? 'green' : 'red'"
-              />
-            </span>
-            <span> {{ day.status ? "Open" : "Close" }}</span>
+            <v-row>
+              <v-col cols="4" class="pt-4">
+                <span class="font-weight-black">{{ day.day }}</span>
+              </v-col>
+              <v-col>
+                <span>
+                  <v-icon
+                    icon="mdi:mdi-circle-medium"
+                    :color="day.status ? 'green' : 'red'"
+                  />
+                </span>
+                <span> {{ day.status ? "Open" : "Close" }}</span>
+              </v-col>
+            </v-row>
           </v-expansion-panel-title>
 
           <v-expansion-panel-text>

@@ -1,9 +1,8 @@
 <script setup>
-import { ref } from "vue";
 import TextfieldDatePicker from "./TextfieldDatePicker.vue";
 import TextfieldTimePicker from "./TextfieldTimePicker.vue";
 
-const props = defineProps({
+defineProps({
   formData: {
     type: [Object],
     required: true,
@@ -35,6 +34,7 @@ const props = defineProps({
         <textfield-time-picker
           v-model="formData.openTime"
           label="Open time"
+          :max="formData.closeTime"
           :disabled="!formData.status"
         />
       </v-col>
@@ -42,6 +42,7 @@ const props = defineProps({
         <textfield-time-picker
           v-model="formData.closeTime"
           label="Close time"
+          :min="formData.openTime"
           :disabled="!formData.status"
         />
       </v-col>
@@ -53,6 +54,7 @@ const props = defineProps({
       <v-col>
         <textfield-time-picker
           v-model="formData.lunchStart"
+          :max="formData.lunchEnd"
           label="Lunch Start"
           :disabled="!formData.status"
         />
@@ -60,6 +62,7 @@ const props = defineProps({
       <v-col>
         <textfield-time-picker
           v-model="formData.lunchEnd"
+          :min="formData.lunchStart"
           label="Lunch End"
           :disabled="!formData.status"
         />
@@ -88,9 +91,7 @@ const props = defineProps({
 
     <v-row>
       <v-spacer />
-      <v-btn variant="tonal" color="red-lighten-1" :disabled="!formData.status"
-        >Save</v-btn
-      >
+      <v-btn variant="tonal" color="red-lighten-1">Save</v-btn>
     </v-row>
   </v-container>
 </template>
