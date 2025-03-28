@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useDate } from "vuetify";
-import { useDateFormatting } from "@/composables/useDateFormatting";
+import { useDateFormatting } from "@/composables/dateFormatting";
 const date = useDate();
 const { dateStringFormat } = useDateFormatting();
 const model = defineModel({ type: String });

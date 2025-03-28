@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from "vue";
 import DayForm from "@/components/DayForm.vue";
+import { useBusinessHours } from "@/composables/businessHours";
+
+const { getBusinessHours } = useBusinessHours();
 
 const days = ref([
   {
@@ -81,6 +84,8 @@ const days = ref([
     startIntervalDate: "2025-10-15",
   },
 ]);
+
+getBusinessHours();
 </script>
 
 <template>

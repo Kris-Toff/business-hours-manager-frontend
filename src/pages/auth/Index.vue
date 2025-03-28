@@ -1,18 +1,31 @@
 <script setup>
 import { ref } from "vue";
+import { useCsrfCookie } from "@/composables/csrfCookie";
+import { useAuth } from "@/composables/auth";
+
+const {
+  authError,
+  loading,
+  email,
+  emailAttrs,
+  password,
+  passwordAttrs,
+  errors,
+  login,
+} = useAuth();
+const { getCsrfCookie } = useCsrfCookie();
 
 const visible = ref(false);
-const form = ref({
-  email: null,
-  password: null,
-});
 
-function login() {}
+function handleSubmit() {
+  getCsrfCookie();
+  login();
+}
 </script>
 
 <template>
   <div>
-    <v-form @submit.prevent="login">
+    <v-form @submit.prevent="handleSubmit">
       <v-card class="mx-auto mt-16" elevation="8" max-width="448" rounded="lg">
         <v-card-item class="bg-red-lighten-1">
           <v-card-title>
@@ -26,7 +39,9 @@ function login() {}
           <div class="text-subtitle-1 text-medium-emphasis">Email</div>
 
           <v-text-field
-            v-model="form.email"
+            v-model="email"
+            v-bind="emailAttrs"
+            :error-messages="errors.email"
             density="compact"
             placeholder="Email address"
             variant="outlined"
@@ -40,7 +55,9 @@ function login() {}
           </div>
 
           <v-text-field
-            v-model="form.password"
+            v-model="password"
+            v-bind="passwordAttrs"
+            :error-messages="errors.password"
             :type="visible ? 'text' : 'password'"
             density="compact"
             placeholder="Enter your password"
@@ -57,11 +74,12 @@ function login() {}
             </template>
           </v-text-field>
 
-          <!-- <div v-if="form.errors.email" class="error-text my-2">
-  {{ form.errors.email }}
-</div> -->
+          <div v-if="authError" class="error-text my-2">
+            {{ authError.message }}
+          </div>
 
           <v-btn
+            :loading="loading"
             type="submit"
             class="mb-8"
             color="red-lighten-1"
