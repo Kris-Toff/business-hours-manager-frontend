@@ -1,7 +1,7 @@
 <script setup>
 import { useAuth } from "@/composables/auth";
 
-const { logout } = useAuth();
+const { loading, logout } = useAuth();
 </script>
 
 <template>
@@ -15,6 +15,7 @@ const { logout } = useAuth();
         icon="mdi:mdi-power"
         title="Logout"
         color="red-lighten-1"
+        :loading="loading"
         @click="logout"
       >
         <v-icon icon="mdi:mdi-power"></v-icon>

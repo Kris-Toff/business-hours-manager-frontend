@@ -6,14 +6,17 @@ export function useBusinessHours() {
   const { fetchApi } = useFetchApi();
   const { errorHandler } = useErrorHandler();
   const loading = ref(false);
+  const data = ref(null);
+  const errors = ref(null);
 
   const getBusinessHours = async () => {
     loading.value = true;
     await fetchApi({ url: "/business-hours", method: "get" })
       .then((response) => {
-        console.log(response);
+        data.value = response;
       })
       .catch((e) => {
+        errors.value = e.response;
         errorHandler(e);
       })
       .finally(() => {
@@ -21,5 +24,5 @@ export function useBusinessHours() {
       });
   };
 
-  return { loading, getBusinessHours };
+  return { data, errors, loading, getBusinessHours };
 }

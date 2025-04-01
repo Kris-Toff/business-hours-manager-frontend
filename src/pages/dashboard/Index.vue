@@ -3,7 +3,7 @@ import { ref } from "vue";
 import DayForm from "@/components/DayForm.vue";
 import { useBusinessHours } from "@/composables/businessHours";
 
-const { loading, getBusinessHours } = useBusinessHours();
+const { data, loading, getBusinessHours } = useBusinessHours();
 
 const days = ref([
   {
@@ -99,8 +99,8 @@ getBusinessHours();
     <v-card class="mx-auto" max-width="600" flat v-else>
       <v-expansion-panels multiple>
         <v-expansion-panel
-          :color="day.status ? 'green-lighten-4' : 'blue-grey-lighten-4'"
-          v-for="day in days"
+          :color="day.is_open ? 'green-lighten-4' : 'blue-grey-lighten-4'"
+          v-for="day in data"
           :key="day.id"
         >
           <v-expansion-panel-title>
@@ -112,10 +112,10 @@ getBusinessHours();
                 <span>
                   <v-icon
                     icon="mdi:mdi-circle-medium"
-                    :color="day.status ? 'green' : 'red'"
+                    :color="day.is_open ? 'green' : 'red'"
                   />
                 </span>
-                <span> {{ day.status ? "Open" : "Close" }}</span>
+                <span> {{ day.is_open ? "Open" : "Close" }}</span>
               </v-col>
             </v-row>
           </v-expansion-panel-title>

@@ -15,7 +15,7 @@ defineProps({
     <v-row>
       <v-col class="py-0">
         <div class="d-flex flex-row">
-          <v-switch v-model="formData.status" color="red-lighten-1">
+          <v-switch v-model="formData.is_open" color="red-lighten-1">
             <template #prepend>
               <span>Close</span>
             </template>
@@ -32,18 +32,18 @@ defineProps({
     <v-row class="mt-2">
       <v-col>
         <textfield-time-picker
-          v-model="formData.openTime"
+          v-model="formData.open_at"
           label="Open time"
-          :max="formData.closeTime"
-          :disabled="!formData.status"
+          :max="formData.close_at"
+          :disabled="!formData.is_open"
         />
       </v-col>
       <v-col>
         <textfield-time-picker
-          v-model="formData.closeTime"
+          v-model="formData.close_at"
           label="Close time"
-          :min="formData.openTime"
-          :disabled="!formData.status"
+          :min="formData.open_at"
+          :disabled="!formData.is_open"
         />
       </v-col>
     </v-row>
@@ -53,18 +53,18 @@ defineProps({
     <v-row class="mt-2">
       <v-col>
         <textfield-time-picker
-          v-model="formData.lunchStart"
-          :max="formData.lunchEnd"
+          v-model="formData.lunch_start"
+          :max="formData.lunch_end"
           label="Lunch Start"
-          :disabled="!formData.status"
+          :disabled="!formData.is_open"
         />
       </v-col>
       <v-col>
         <textfield-time-picker
-          v-model="formData.lunchEnd"
-          :min="formData.lunchStart"
+          v-model="formData.lunch_end"
+          :min="formData.lunch_start"
           label="Lunch End"
-          :disabled="!formData.status"
+          :disabled="!formData.is_open"
         />
       </v-col>
     </v-row>
@@ -74,17 +74,17 @@ defineProps({
     <v-row class="mt-2">
       <v-col class="d-flex align-center">
         <v-checkbox
-          v-model="formData.otherWeek"
+          v-model="formData.is_every_other_week"
           label="Every other week"
           color="red-lighten-1"
-          :disabled="!formData.status"
+          :disabled="!formData.is_open"
         ></v-checkbox>
       </v-col>
       <v-col>
         <textfield-date-picker
-          v-model="formData.startIntervalDate"
+          v-model="formData.other_week_start_date"
           label="Start date"
-          :disabled="!formData.otherWeek || !formData.status"
+          :disabled="!formData.is_every_other_week || !formData.is_open"
         />
       </v-col>
     </v-row>

@@ -42,6 +42,7 @@ export function useAuth() {
   });
 
   const logout = async () => {
+    loading.value = true;
     await fetchApi({ url: "/logout", method: "post" })
       .then(() => {
         router.push({ name: "login" });
@@ -49,6 +50,9 @@ export function useAuth() {
       .catch((e) => {
         authError.value = e.data;
         errorHandler(e);
+      })
+      .finally(() => {
+        loading.value = false;
       });
   };
 
