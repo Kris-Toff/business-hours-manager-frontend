@@ -5,19 +5,22 @@ export function useErrorHandler() {
   const snackbarStore = useSnackbarStore();
 
   function errorHandler(response) {
+    snackbarStore.toggleSnackbar(true);
+    snackbarStore.setType("error");
+
     switch (response.status) {
       case 401: // Unauthorized
         snackbarStore.setMessage(response.data.message);
-        snackbarStore.toggleSnackbar(true);
-        snackbarStore.setType("error");
 
         router.push({ name: "login" });
         break;
 
+      case 422: // Unprocessable Content
+        snackbarStore.setMessage(response.data.message);
+        break;
+
       default:
         snackbarStore.setMessage("Something went wrong");
-        snackbarStore.toggleSnackbar(true);
-        snackbarStore.setType("error");
         break;
     }
   }

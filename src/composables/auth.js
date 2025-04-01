@@ -4,9 +4,11 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/yup";
 import { object, string } from "yup";
 import { useFetchApi } from "./fetchApi";
+import { useErrorHandler } from "./errorHandler";
 
 export function useAuth() {
   const { fetchApi } = useFetchApi();
+  const { errorHandler } = useErrorHandler();
   const authError = ref(null);
   const loading = ref(false);
 
@@ -34,6 +36,7 @@ export function useAuth() {
       .catch((e) => {
         authError.value = e.data;
         loading.value = false;
+        errorHandler(e);
       });
   });
 
@@ -44,6 +47,7 @@ export function useAuth() {
       })
       .catch((e) => {
         authError.value = e.data;
+        errorHandler(e);
       });
   };
 
