@@ -7,7 +7,7 @@ const { logout } = useAuth();
 <template>
   <v-app-bar :elevation="2">
     <template #prepend>
-      <v-app-bar-nav-icon icon="mdi:mdi-view-dashboard" />
+      <v-app-bar-nav-icon icon="mdi:mdi-view-dashboard" color="red-lighten-1" />
     </template>
 
     <template #append>

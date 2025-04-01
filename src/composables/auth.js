@@ -31,12 +31,13 @@ export function useAuth() {
     await fetchApi({ url: "/login", method: "post", params: values })
       .then(() => {
         router.push({ name: "dashboard" });
-        loading.value = false;
       })
       .catch((e) => {
         authError.value = e.data;
-        loading.value = false;
         errorHandler(e);
+      })
+      .finally(() => {
+        loading.value = false;
       });
   });
 

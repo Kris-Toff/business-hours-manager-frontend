@@ -3,7 +3,7 @@ import { ref } from "vue";
 import DayForm from "@/components/DayForm.vue";
 import { useBusinessHours } from "@/composables/businessHours";
 
-const { getBusinessHours } = useBusinessHours();
+const { loading, getBusinessHours } = useBusinessHours();
 
 const days = ref([
   {
@@ -90,7 +90,13 @@ getBusinessHours();
 
 <template>
   <div>
-    <v-card class="mx-auto" max-width="600" flat>
+    <v-skeleton-loader
+      v-if="loading"
+      type="table"
+      max-width="600"
+      class="mx-auto"
+    />
+    <v-card class="mx-auto" max-width="600" flat v-else>
       <v-expansion-panels multiple>
         <v-expansion-panel
           :color="day.status ? 'green-lighten-4' : 'blue-grey-lighten-4'"
