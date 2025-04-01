@@ -16,6 +16,7 @@ export function useErrorHandler() {
         break;
 
       case 422: // Unprocessable Content
+      case 419: // CSRF token miss match
         snackbarStore.setMessage(response.data.message);
         break;
 

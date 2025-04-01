@@ -9,6 +9,8 @@ const pickerProps = defineProps({
   label: { type: [String], default: null },
   min: { type: [String], default: null },
   max: { type: [String], default: null },
+  errorMessages: { type: [String], default: null },
+  vBindAttrs: { type: [String], default: null },
 });
 
 const textModel = ref(
@@ -25,12 +27,14 @@ function modelUpdate(v) {
 <template>
   <v-text-field
     v-model="textModel"
+    v-bind="vBindAttrs"
     density="compact"
     type="text"
     class="mt-2"
     color="red-lighten-1"
     variant="outlined"
     :label="pickerProps.label"
+    :error-messages="pickerProps.errorMessages"
     readonly
   >
     <template #append-inner>
