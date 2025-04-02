@@ -17,9 +17,9 @@ const { getCsrfCookie } = useCsrfCookie();
 
 const visible = ref(false);
 
-function handleSubmit() {
-  getCsrfCookie();
-  login();
+async function handleSubmit() {
+  await getCsrfCookie();
+  await login();
 }
 </script>
 

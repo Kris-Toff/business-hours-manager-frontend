@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
+// const now = dayjs().format("MM-DD-YYYY");
 const timeModel = defineModel();
 const pickerProps = defineProps({
   label: { type: [String], default: null },
@@ -18,6 +19,18 @@ const textModel = ref(
     ? dayjs(timeModel.value, "hh:mm").format("hh:mm a")
     : null
 );
+
+// const maxTime = computed(() => {
+//   return dayjs(now + " " + pickerProps.max)
+//     .subtract(1, "h")
+//     .format("hh:mm:ss");
+// });
+
+// const minTime = computed(() => {
+//   return dayjs(now + " " + pickerProps.min)
+//     .add(1, "h")
+//     .format("hh:mm:ss");
+// });
 
 function modelUpdate(v) {
   textModel.value = dayjs(v, "hh:mm").format("hh:mm a");

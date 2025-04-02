@@ -24,6 +24,17 @@ export function useFetchApi() {
               reject(e.response);
             });
         });
+      case "put":
+        return new Promise((resolve, reject) => {
+          instance
+            .put(url, params)
+            .then((response) => {
+              resolve(response.data);
+            })
+            .catch((e) => {
+              reject(e.response);
+            });
+        });
       default:
         return new Promise((resolve, reject) => {
           instance

@@ -5,14 +5,17 @@ import { useDateFormatting } from "@/composables/dateFormatting";
 const date = useDate();
 const { dateStringFormat } = useDateFormatting();
 const model = defineModel({ type: String });
-const pickerProps = defineProps({ label: { type: [String], default: null } });
+const pickerProps = defineProps({
+  label: { type: [String], default: null },
+  errorMessages: { type: [String], default: null },
+});
 
 const selectedDate = ref(
   model.value != null ? date.parseISO(model.value) : null
 );
 
 const dateString = computed(() => {
-  return model.value != null ? date.format(model.value, "keyboardDate") : null;
+  return model.value != null ? date.format(model.value, "keyboardDate") : "";
 });
 
 function modelUpdate(v) {
@@ -29,6 +32,7 @@ function modelUpdate(v) {
     color="red-lighten-1"
     variant="outlined"
     :label="pickerProps.label"
+    :error-messages="pickerProps.errorMessages"
     readonly
   >
     <template #append-inner>

@@ -18,10 +18,17 @@ export const useSnackbarStore = defineStore("snackbar", () => {
     snackbarType.value = type;
   }
 
+  function showSnackbar({ status = true, msg, type }) {
+    snackbar.value = status;
+    message.value = msg;
+    snackbarType.value = type;
+  }
+
   return {
     message,
     snackbar,
     snackbarType,
+    showSnackbar,
     setMessage,
     toggleSnackbar,
     setType,

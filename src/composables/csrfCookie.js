@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useFetchApi } from "./fetchApi";
 
 export function useCsrfCookie() {
@@ -21,9 +21,5 @@ export function useCsrfCookie() {
       });
   };
 
-  const csrfComp = computed(() => {
-    return data.value ?? "ok";
-  });
-
-  return { data, errors, loading, csrfComp, getCsrfCookie };
+  return { data, errors, loading, getCsrfCookie };
 }

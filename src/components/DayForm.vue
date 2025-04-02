@@ -1,6 +1,7 @@
 <script setup>
 import TextfieldDatePicker from "./TextfieldDatePicker.vue";
 import TextfieldTimePicker from "./TextfieldTimePicker.vue";
+import { useBusinessHours } from "@/composables/businessHours";
 
 const props = defineProps({
   formData: {
@@ -19,13 +20,11 @@ const props = defineProps({
   },
 });
 
-function handleSubmit(val) {
-  console.log(val, props.formData);
-}
+const { saving, updateBusinessHours } = useBusinessHours();
 </script>
 
 <template>
-  <v-form @submit.prevent="handleSubmit">
+  <v-form @submit.prevent="updateBusinessHours(formData.value)">
     <v-container fluid>
       <v-row>
         <v-col class="py-0">
@@ -48,8 +47,8 @@ function handleSubmit(val) {
         <v-col>
           <textfield-time-picker
             v-model="formData.value.openAt"
-            label="Open time"
             :max="formData.value.closeAt"
+            label="Open time"
             :disabled="!formData.value.isOpen"
             :error-messages="errors[`days[${idx}].openAt`]"
           />
@@ -57,8 +56,8 @@ function handleSubmit(val) {
         <v-col>
           <textfield-time-picker
             v-model="formData.value.closeAt"
-            label="Close time"
             :min="formData.value.openAt"
+            label="Close time"
             :disabled="!formData.value.isOpen"
             :error-messages="errors[`days[${idx}].closeAt`]"
           />
@@ -106,13 +105,21 @@ function handleSubmit(val) {
             :disabled="
               !formData.value.isEveryOtherWeek || !formData.value.isOpen
             "
+            :error-messages="errors[`days[${idx}].otherWeekStartDate`]"
           />
         </v-col>
       </v-row>
 
       <v-row>
         <v-spacer />
-        <v-btn variant="tonal" color="red-lighten-1" type="submit">Save</v-btn>
+        <v-btn
+          variant="tonal"
+          color="red-lighten-1"
+          type="submit"
+          :loading="saving"
+        >
+          Save
+        </v-btn>
       </v-row>
     </v-container>
   </v-form>
