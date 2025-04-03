@@ -3,7 +3,7 @@ import TextfieldDatePicker from "./TextfieldDatePicker.vue";
 import TextfieldTimePicker from "./TextfieldTimePicker.vue";
 import { useBusinessHours } from "@/composables/businessHours";
 
-const props = defineProps({
+defineProps({
   formData: {
     type: [Object],
     required: true,
@@ -24,12 +24,12 @@ const { saving, updateBusinessHours } = useBusinessHours();
 </script>
 
 <template>
-  <v-form @submit.prevent="updateBusinessHours(formData.value)">
+  <v-form @submit.prevent="updateBusinessHours">
     <v-container fluid>
       <v-row>
         <v-col class="py-0">
           <div class="d-flex flex-row">
-            <v-switch v-model="formData.value.isOpen" color="red-lighten-1">
+            <v-switch v-model="formData.isOpen" color="red-lighten-1">
               <template #prepend>
                 <span>Close</span>
               </template>
@@ -45,21 +45,21 @@ const { saving, updateBusinessHours } = useBusinessHours();
 
       <v-row class="mt-2">
         <v-col>
+          <!-- :error-messages="errors[`days[${idx}].openAt`]" -->
           <textfield-time-picker
-            v-model="formData.value.openAt"
-            :max="formData.value.closeAt"
+            v-model="formData.openAt"
+            :max="formData.closeAt"
             label="Open time"
-            :disabled="!formData.value.isOpen"
-            :error-messages="errors[`days[${idx}].openAt`]"
+            :disabled="!formData.isOpen"
           />
         </v-col>
         <v-col>
+          <!-- :error-messages="errors[`days[${idx}].closeAt`]" -->
           <textfield-time-picker
-            v-model="formData.value.closeAt"
-            :min="formData.value.openAt"
+            v-model="formData.closeAt"
+            :min="formData.openAt"
             label="Close time"
-            :disabled="!formData.value.isOpen"
-            :error-messages="errors[`days[${idx}].closeAt`]"
+            :disabled="!formData.isOpen"
           />
         </v-col>
       </v-row>
@@ -68,21 +68,21 @@ const { saving, updateBusinessHours } = useBusinessHours();
 
       <v-row class="mt-2">
         <v-col>
+          <!-- :error-messages="errors[`days[${idx}].lunchStart`]" -->
           <textfield-time-picker
-            v-model="formData.value.lunchStart"
-            :max="formData.value.lunchEnd"
+            v-model="formData.lunchStart"
+            :max="formData.lunchEnd"
             label="Lunch Start"
-            :disabled="!formData.value.isOpen"
-            :error-messages="errors[`days[${idx}].lunchStart`]"
+            :disabled="!formData.isOpen"
           />
         </v-col>
         <v-col>
+          <!-- :error-messages="errors[`days[${idx}].lunchEnd`]" -->
           <textfield-time-picker
-            v-model="formData.value.lunchEnd"
-            :min="formData.value.lunchStart"
+            v-model="formData.lunchEnd"
+            :min="formData.lunchStart"
             label="Lunch End"
-            :disabled="!formData.value.isOpen"
-            :error-messages="errors[`days[${idx}].lunchEnd`]"
+            :disabled="!formData.isOpen"
           />
         </v-col>
       </v-row>
@@ -92,20 +92,18 @@ const { saving, updateBusinessHours } = useBusinessHours();
       <v-row class="mt-2">
         <v-col class="d-flex align-center">
           <v-checkbox
-            v-model="formData.value.isEveryOtherWeek"
+            v-model="formData.isEveryOtherWeek"
             label="Every other week"
             color="red-lighten-1"
-            :disabled="!formData.value.isOpen"
+            :disabled="!formData.isOpen"
           />
         </v-col>
         <v-col>
+          <!-- :error-messages="errors[`days[${idx}].otherWeekStartDate`]" -->
           <textfield-date-picker
-            v-model="formData.value.otherWeekStartDate"
+            v-model="formData.otherWeekStartDate"
             label="Start date"
-            :disabled="
-              !formData.value.isEveryOtherWeek || !formData.value.isOpen
-            "
-            :error-messages="errors[`days[${idx}].otherWeekStartDate`]"
+            :disabled="!formData.isEveryOtherWeek || !formData.isOpen"
           />
         </v-col>
       </v-row>

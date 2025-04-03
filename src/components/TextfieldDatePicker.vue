@@ -8,6 +8,7 @@ const model = defineModel({ type: String });
 const pickerProps = defineProps({
   label: { type: [String], default: null },
   errorMessages: { type: [String], default: null },
+  vBindAttrs: { type: [Object], default: null },
 });
 
 const selectedDate = ref(
@@ -26,6 +27,7 @@ function modelUpdate(v) {
 <template>
   <v-text-field
     v-model="dateString"
+    v-bind="vBindAttrs"
     density="compact"
     type="text"
     class="mt-2"

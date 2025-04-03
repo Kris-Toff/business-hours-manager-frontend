@@ -11,7 +11,7 @@ const pickerProps = defineProps({
   min: { type: [String], default: null },
   max: { type: [String], default: null },
   errorMessages: { type: [String], default: null },
-  vBindAttrs: { type: [String], default: null },
+  vBindAttrs: { type: [Object], default: null },
 });
 
 const textModel = ref(
