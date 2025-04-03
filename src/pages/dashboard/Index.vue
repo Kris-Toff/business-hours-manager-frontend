@@ -124,6 +124,7 @@ getBusinessHours();
                     <textfield-date-picker
                       v-model="forms[index].otherWeekStartDate"
                       :v-bind-attrs="forms[index].otherWeekStartDateAttrs"
+                      :day-of-the-week="day.day"
                       label="Start date"
                       :disabled="
                         !forms[index].isEveryOtherWeek || !forms[index].isOpen

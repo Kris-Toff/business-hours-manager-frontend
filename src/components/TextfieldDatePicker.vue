@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useDate } from "vuetify";
+import dayjs from "dayjs";
 import { useDateFormatting } from "@/composables/dateFormatting";
 const date = useDate();
 const { dateStringFormat } = useDateFormatting();
@@ -9,6 +10,7 @@ const pickerProps = defineProps({
   label: { type: [String], default: null },
   errorMessages: { type: [String], default: null },
   vBindAttrs: { type: [Object], default: null },
+  dayOfTheWeek: { type: [String], default: null },
 });
 
 const selectedDate = ref(
@@ -21,6 +23,11 @@ const dateString = computed(() => {
 
 function modelUpdate(v) {
   model.value = dateStringFormat(v, "YYYY-MM-DD");
+}
+function allowedDates(val) {
+  return pickerProps.dayOfTheWeek
+    ? dayjs(val).format("dddd") == pickerProps.dayOfTheWeek
+    : true;
 }
 </script>
 
@@ -51,6 +58,7 @@ function modelUpdate(v) {
         </template>
         <v-date-picker
           v-model="selectedDate"
+          :allowed-dates="allowedDates"
           color="red-lighten-1"
           @update:model-value="modelUpdate"
         />
