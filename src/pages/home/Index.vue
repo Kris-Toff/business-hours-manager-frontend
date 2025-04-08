@@ -121,17 +121,18 @@ onBeforeUnmount(() => {
         :is-lunch="isLunch"
       >
         <div v-if="isLunch">
-          <span> Close for lunch break </span>
+          <h3>Close for lunch break</h3>
 
           <div class="mt-3">
             <p>be back in: {{ lunchTimerHumanized }}</p>
           </div>
         </div>
         <div v-else>
-          <span v-if="data?.isOpen && isOpenByTime">
-            Yes, we're open! {{ timeNow }}
-          </span>
-          <span v-else>Sorry, we're close today.</span>
+          <h3 v-if="data?.isOpen && isOpenByTime">Yes, we're open!</h3>
+          <div v-else>
+            <h3>Sorry, we're close today.</h3>
+            <p class="mt-3">Next opening:</p>
+          </div>
         </div>
       </sign>
     </v-card-text>

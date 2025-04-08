@@ -52,11 +52,7 @@ const colorStatus = computed(() => {
     class="sheet-msg pa-6 text-center"
     :color="colorStatus"
   >
-    <h3><slot /></h3>
-
-    <div class="mt-3" v-if="!status && !isLunch">
-      <p>Next opening:</p>
-    </div>
+    <slot />
   </v-sheet>
 </template>
 

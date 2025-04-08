@@ -93,6 +93,7 @@ getBusinessHours();
                     <textfield-time-picker
                       v-model="forms[index].lunchStart"
                       :v-bind-attrs="forms[index].lunchStartAttrs"
+                      :min="forms[index].openAt"
                       :max="forms[index].lunchEnd"
                       label="Lunch Start"
                       :disabled="!forms[index].isOpen"
@@ -103,6 +104,7 @@ getBusinessHours();
                       v-model="forms[index].lunchEnd"
                       :v-bind-attrs="forms[index].lunchEndAttrs"
                       :min="forms[index].lunchStart"
+                      :max="forms[index].closeAt"
                       label="Lunch End"
                       :disabled="!forms[index].isOpen"
                     />
