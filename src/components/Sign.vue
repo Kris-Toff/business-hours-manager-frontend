@@ -1,31 +1,65 @@
 <script setup>
+import { computed } from "vue";
+
 const props = defineProps({
   status: {
-    default: "close",
-    type: [String],
+    default: false,
+    type: [Boolean],
     validator(v) {
-      const types = ["open", "close"];
-
-      if (!types.includes(v)) {
-        console.warn(`Invalid type: ${v}. Valid option is close or open`);
+      if (typeof v != "boolean") {
+        console.warn(`Invalid type: ${v}. Valid option is type boolean `);
+        return false;
+      }
+      return true;
+    },
+  },
+  loading: {
+    default: false,
+    type: [Boolean],
+    validator(v) {
+      if (typeof v != "boolean") {
+        console.warn(`Invalid type: ${v}. Valid option is type boolean `);
+        return false;
+      }
+      return true;
+    },
+  },
+  isLunch: {
+    default: false,
+    type: [Boolean],
+    validator(v) {
+      if (typeof v != "boolean") {
+        console.warn(`Invalid type: ${v}. Valid option is type boolean `);
         return false;
       }
       return true;
     },
   },
 });
+
+const colorStatus = computed(() => {
+  if (props.isLunch) return "yellow-lighten-3";
+  else if (props.status) return "green-lighten-3";
+  else return "red-lighten-3";
+});
 </script>
 
 <template>
+  <v-skeleton-loader type="article" v-if="loading" />
   <v-sheet
+    v-else
     :elevation="1"
     class="sheet-msg pa-6 text-center"
-    :color="props.status == 'open' ? 'green-lighten-3' : 'red-lighten-3'"
+    :color="colorStatus"
   >
     <h3><slot /></h3>
 
-    <div class="mt-3" v-if="status == 'close'">
+    <div class="mt-3" v-if="!status && !isLunch">
       <p>Next opening:</p>
+    </div>
+
+    <div class="mt-3" v-if="isLunch">
+      <p>be back in:</p>
     </div>
   </v-sheet>
 </template>
