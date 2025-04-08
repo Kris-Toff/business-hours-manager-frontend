@@ -3,11 +3,15 @@ import { onBeforeUnmount, ref, watch } from "vue";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import duration from "dayjs/plugin/duration";
+import relativeTime from "dayjs/plugin/relativeTime";
 import Sign from "@/components/Sign.vue";
 import DateChecker from "@/components/DateChecker.vue";
 import { useHome } from "@/composables/home";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 dayjs.tz.setDefault("Asia/Hong_Kong");
 
 const { data } = useHome();
@@ -17,6 +21,7 @@ const dayOfTheWeek = ref(null);
 const isOpenByTime = ref(false);
 const isLunch = ref(false);
 const isChecking = ref(true);
+const lunchTimerHumanized = ref(null);
 
 const clock = setInterval(() => {
   const dayjsLocal = dayjs();
@@ -45,6 +50,22 @@ function timeBetween(currentTime, startTime, endTime) {
   return status;
 }
 
+function countdownTimer(currentTime, startTime) {
+  let [startHours, startMinutes] = startTime.split(":");
+  let [currentHours, currentMinutes] = currentTime.split(":");
+
+  let start = dayjs().hour(startHours).minute(startMinutes);
+  let current = dayjs().hour(currentHours).minute(currentMinutes);
+
+  let diff = start.diff(current, "minute");
+
+  return diff;
+}
+
+function humanizeTimeInMinutes(minutes) {
+  return dayjs.duration(minutes, "minutes").humanize();
+}
+
 watch(timeNow, (v) => {
   if (data.value) {
     // check open time and end time
@@ -61,12 +82,19 @@ watch(timeNow, (v) => {
       data.value.lunchEnd
     );
 
-    if (isOpenTimeBetween && !isLunchTimeBetween) {
+    if (isOpenTimeBetween) {
       isOpenByTime.value = true;
-      isLunch.value = false;
+
+      if (isLunchTimeBetween) isLunch.value = true;
+      else isLunch.value = false;
     } else {
       isOpenByTime.value = false;
-      isLunch.value = true;
+      isLunch.value = false;
+    }
+
+    if (isLunch.value) {
+      const lunchTimer = countdownTimer(v, data.value.lunchEnd, true);
+      lunchTimerHumanized.value = humanizeTimeInMinutes(lunchTimer);
     }
 
     if (isChecking.value) isChecking.value = false;
@@ -96,7 +124,7 @@ onBeforeUnmount(() => {
           <span> Close for lunch break </span>
 
           <div class="mt-3">
-            <p>be back in: {{ timeNow }}</p>
+            <p>be back in: {{ lunchTimerHumanized }}</p>
           </div>
         </div>
         <div v-else>

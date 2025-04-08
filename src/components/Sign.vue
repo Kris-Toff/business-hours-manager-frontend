@@ -57,10 +57,6 @@ const colorStatus = computed(() => {
     <div class="mt-3" v-if="!status && !isLunch">
       <p>Next opening:</p>
     </div>
-
-    <div class="mt-3" v-if="isLunch">
-      <p>be back in:</p>
-    </div>
   </v-sheet>
 </template>
 
