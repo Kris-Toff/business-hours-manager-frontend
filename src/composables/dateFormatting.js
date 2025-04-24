@@ -1,7 +1,14 @@
 import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import advancedFormat from "dayjs/plugin/advancedFormat";
-dayjs.extend(customParseFormat).extend(advancedFormat);
+// import customParseFormat from "dayjs/plugin/customParseFormat";
+// import advancedFormat from "dayjs/plugin/advancedFormat";
+// import relativeTime from "dayjs/plugin/relativeTime";
+// import duration from "dayjs/plugin/relativeTime";
+// dayjs
+//   .extend(customParseFormat)
+//   .extend(advancedFormat)
+//   .extend(duration)
+//   .extend(relativeTime);
+// dayjs.tz.setDefault("Asia/Hong_Kong");
 
 export function useDateFormatting() {
   /**
@@ -16,5 +23,20 @@ export function useDateFormatting() {
     return dayjs(dateString).format(format);
   };
 
-  return { dateStringFormat };
+  const humanizeDate = (dateTimeString) => {
+    if (!dateTimeString) return;
+
+    const inputDate = dayjs(dateTimeString).startOf("day");
+    const today = dayjs().startOf("day");
+
+    const diff = inputDate.diff(today, "day");
+
+    if (diff === 0) return "Today";
+    if (diff === 1) return "Tomorrow";
+    if (diff === -1) return "yesterday";
+    if (diff > 1) return `in ${diff} days`;
+    if (diff < -1) return `${Math.abs(diff)} days ago`;
+  };
+
+  return { dateStringFormat, humanizeDate };
 }

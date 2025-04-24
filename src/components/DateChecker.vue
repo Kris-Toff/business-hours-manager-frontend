@@ -9,7 +9,12 @@ const selectedDate = ref(null);
   <div class="d-flex flex-column">
     <h4>Check if we are open:</h4>
     <textfield-date-picker v-model="selectedDate" label="Checker" />
-    <v-btn variant="tonal" color="red-lighten-1" class="align-self-end">
+    <v-btn
+      variant="tonal"
+      color="red-lighten-1"
+      class="align-self-end"
+      @click="$emit('dateChecker', { date: selectedDate })"
+    >
       Check
     </v-btn>
   </div>

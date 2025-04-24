@@ -8,20 +8,30 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Sign from "@/components/Sign.vue";
 import DateChecker from "@/components/DateChecker.vue";
 import { useHome } from "@/composables/home";
+import { useTimeFormatting } from "@/composables/timeFormatting";
+import { useDateFormatting } from "@/composables/dateFormatting";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 dayjs.tz.setDefault("Asia/Hong_Kong");
 
-const { data } = useHome();
-const timeNow = ref(null);
+const { data, loading, nextOpeningData, nextOpening, getNextOpeningByDate } =
+  useHome();
+const { timeComparisons, countdownTimer, humanizeTime } = useTimeFormatting();
+const { humanizeDate, dateStringFormat } = useDateFormatting();
 const dateNow = ref(null);
 const dayOfTheWeek = ref(null);
-const isOpenByTime = ref(false);
-const isLunch = ref(false);
-const isChecking = ref(true);
+const storeStatus = ref({
+  isBefore: false,
+  isBetween: false,
+  isAfter: false,
+});
+const lunchStatus = ref({ isBefore: false, isBetween: false, isAfter: false });
 const lunchTimerHumanized = ref(null);
+const timeNow = ref(dayjs.tz(dayjs()).format("HH:mm:ss"));
+const nextOpeningByDateData = ref(null);
+const dateCheckerLoading = ref(false);
 
 const clock = setInterval(() => {
   const dayjsLocal = dayjs();
@@ -29,75 +39,51 @@ const clock = setInterval(() => {
   timeNow.value = dayjs.tz(dayjsLocal).format("HH:mm:ss");
   dateNow.value = dayjs.tz(dayjsLocal).format("YYYY-MM-DD");
   dayOfTheWeek.value = dayjs.tz(dayjsLocal).format("dddd");
-}, 1000);
+}, 60000); // 1 min
 
-function timeBetween(currentTime, startTime, endTime) {
-  let status = false;
+function setupStatus(time) {
+  // check current time is between open and close time
+  storeStatus.value = timeComparisons(
+    time,
+    data.value.openAt,
+    data.value.closeAt
+  );
 
-  let [startHours, startMinutes] = startTime.split(":");
-  let [endHours, endMinutes] = endTime.split(":");
-  let [currentHours, currentMinutes] = currentTime.split(":");
+  // check current time is between lunch  start and end
+  lunchStatus.value = timeComparisons(
+    time,
+    data.value.lunchStart,
+    data.value.lunchEnd
+  );
 
-  let start = dayjs().hour(startHours).minute(startMinutes);
-  let end = dayjs().hour(endHours).minute(endMinutes);
-  let current = dayjs().hour(currentHours).minute(currentMinutes);
-
-  let diffStart = current.diff(start, "minute");
-  let diffEnd = current.diff(end, "minute");
-
-  if (diffStart > 0 && diffEnd < 0) status = true;
-
-  return status;
+  if (lunchStatus.value.isBetween) {
+    const lunchTimer = countdownTimer(time, data.value.lunchEnd);
+    lunchTimerHumanized.value = humanizeTime(lunchTimer);
+  }
 }
 
-function countdownTimer(currentTime, startTime) {
-  let [startHours, startMinutes] = startTime.split(":");
-  let [currentHours, currentMinutes] = currentTime.split(":");
-
-  let start = dayjs().hour(startHours).minute(startMinutes);
-  let current = dayjs().hour(currentHours).minute(currentMinutes);
-
-  let diff = start.diff(current, "minute");
-
-  return diff;
-}
-
-function humanizeTimeInMinutes(minutes) {
-  return dayjs.duration(minutes, "minutes").humanize();
+async function checkDate(data) {
+  dateCheckerLoading.value = true;
+  nextOpeningByDateData.value = await getNextOpeningByDate(data.date);
+  dateCheckerLoading.value = false;
 }
 
 watch(timeNow, (v) => {
-  if (data.value) {
-    // check open time and end time
-    const isOpenTimeBetween = timeBetween(
-      v,
-      data.value.openAt,
-      data.value.closeAt
-    );
+  setupStatus(v);
+});
 
-    // check lunch start and lunch end
-    const isLunchTimeBetween = timeBetween(
-      v,
-      data.value.lunchStart,
-      data.value.lunchEnd
-    );
-
-    if (isOpenTimeBetween) {
-      isOpenByTime.value = true;
-
-      if (isLunchTimeBetween) isLunch.value = true;
-      else isLunch.value = false;
+watch(data, () => {
+  setupStatus(timeNow.value);
+  if (!storeStatus.value.isBetween) {
+    if (data.value.isOpen && storeStatus.value.isBefore) {
+      // To Do
+      // get next opening by hours
+      console.log("is before");
     } else {
-      isOpenByTime.value = false;
-      isLunch.value = false;
+      // get next opening by day
+      console.log("after");
+      nextOpening();
     }
-
-    if (isLunch.value) {
-      const lunchTimer = countdownTimer(v, data.value.lunchEnd, true);
-      lunchTimerHumanized.value = humanizeTimeInMinutes(lunchTimer);
-    }
-
-    if (isChecking.value) isChecking.value = false;
   }
 });
 
@@ -116,11 +102,11 @@ onBeforeUnmount(() => {
 
     <v-card-text class="mt-6">
       <sign
-        :status="data?.isOpen && isOpenByTime"
-        :loading="isChecking"
-        :is-lunch="isLunch"
+        :status="data?.isOpen && storeStatus.isBetween"
+        :loading="loading"
+        :is-lunch="lunchStatus.isBetween"
       >
-        <div v-if="isLunch">
+        <div v-if="lunchStatus.isBetween">
           <h3>Close for lunch break</h3>
 
           <div class="mt-3">
@@ -128,17 +114,49 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <div v-else>
-          <h3 v-if="data?.isOpen && isOpenByTime">Yes, we're open!</h3>
+          <h3 v-if="data?.isOpen && storeStatus.isBetween">Yes, we're open!</h3>
           <div v-else>
             <h3>Sorry, we're close today.</h3>
-            <p class="mt-3">Next opening:</p>
+            <p class="mt-3" v-if="nextOpeningData">
+              Next opening: {{ humanizeDate(nextOpeningData.date) }}
+            </p>
+            <p class="mt-1" v-if="nextOpeningData">
+              {{ dateStringFormat(nextOpeningData.date, "dddd MMM DD, YYYY") }}
+            </p>
           </div>
         </div>
       </sign>
     </v-card-text>
 
     <v-card-text class="mt-6">
-      <date-checker />
+      <date-checker @date-checker="checkDate" />
+      <sign
+        v-if="nextOpeningByDateData"
+        :status="nextOpeningByDateData.result.isOpen"
+        :loading="dateCheckerLoading"
+        class="mt-6"
+      >
+        <div>
+          {{ nextOpeningByDateData.isOpen }}
+          <h3 v-if="nextOpeningByDateData.result.isOpen">
+            Yes, we're open on this day:
+            {{
+              dateStringFormat(nextOpeningByDateData.date, "dddd MMM DD, YYYY")
+            }}
+          </h3>
+          <div v-else>
+            <h3>
+              Sorry, we're close on this day:
+              {{
+                dateStringFormat(
+                  nextOpeningByDateData.date,
+                  "dddd MMM DD, YYYY"
+                )
+              }}
+            </h3>
+          </div>
+        </div>
+      </sign>
     </v-card-text>
   </v-card>
 </template>
