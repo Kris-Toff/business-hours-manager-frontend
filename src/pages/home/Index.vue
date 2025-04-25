@@ -29,6 +29,7 @@ const storeStatus = ref({
 });
 const lunchStatus = ref({ isBefore: false, isBetween: false, isAfter: false });
 const lunchTimerHumanized = ref(null);
+const openTimerHumanized = ref(null);
 const timeNow = ref(dayjs.tz(dayjs()).format("HH:mm:ss"));
 const nextOpeningByDateData = ref(null);
 const dateCheckerLoading = ref(false);
@@ -60,6 +61,11 @@ function setupStatus(time) {
     const lunchTimer = countdownTimer(time, data.value.lunchEnd);
     lunchTimerHumanized.value = humanizeTime(lunchTimer);
   }
+
+  if (data.value.isOpen && storeStatus.value.isBefore) {
+    const openTimer = countdownTimer(time, data.value.openAt);
+    openTimerHumanized.value = humanizeTime(openTimer);
+  }
 }
 
 async function checkDate(data) {
@@ -72,19 +78,20 @@ watch(timeNow, (v) => {
   setupStatus(v);
 });
 
-watch(data, () => {
-  setupStatus(timeNow.value);
-  if (!storeStatus.value.isBetween) {
-    if (data.value.isOpen && storeStatus.value.isBefore) {
-      // To Do
-      // get next opening by hours
-      console.log("is before");
+watch(storeStatus, (v) => {
+  if (!v.isBetween) {
+    if (data.value.isOpen && v.isBefore) {
+      // openning time is before
     } else {
-      // get next opening by day
-      console.log("after");
+      // openning time is after
       nextOpening();
     }
   }
+});
+
+// will run once data is updated
+watch(data, () => {
+  setupStatus(timeNow.value);
 });
 
 onBeforeUnmount(() => {
@@ -115,8 +122,12 @@ onBeforeUnmount(() => {
         </div>
         <div v-else>
           <h3 v-if="data?.isOpen && storeStatus.isBetween">Yes, we're open!</h3>
+          <h3 v-else-if="data?.isOpen && storeStatus.isBefore">
+            Our store will open in {{ openTimerHumanized }}
+          </h3>
           <div v-else>
-            <h3>Sorry, we're close today.</h3>
+            <h3 v-if="!data?.isOpen">Sorry, we're close today.</h3>
+            <h3 v-else>Sorry, we're close.</h3>
             <p class="mt-3" v-if="nextOpeningData">
               Next opening: {{ humanizeDate(nextOpeningData.date) }}
             </p>

@@ -28,7 +28,7 @@ export function useTimeFormatting() {
     let diffStart = current.diff(start, unit);
     let diffEnd = current.diff(end, unit);
 
-    if (diffStart > 0 && diffEnd < 0) status = true;
+    if (diffStart >= 0 && diffEnd <= 0) status = true;
 
     return {
       isBefore: diffStart < 0,
